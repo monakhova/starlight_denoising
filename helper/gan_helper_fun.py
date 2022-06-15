@@ -445,7 +445,7 @@ class NoiseGenerator2d3d_distribubted(nn.Module):
         
         self.unet_opts = unet_opts
         
-        mean_noise = scipy.io.loadmat('data/fixed_pattern_noise.mat')['mean_pattern']
+        mean_noise = scipy.io.loadmat('../data/fixed_pattern_noise.mat')['mean_pattern']
         fixed_noise = mean_noise.astype('float32')/2**16
         if 'learned' in add_fixed:
             print('using learned fixed noise')
