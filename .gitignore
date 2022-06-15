@@ -1,0 +1,13 @@
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+__pycache__/
+ipython_config.py
+
+.python-version
+*.png
+*.jpg
+*.jpeg
+*.tiff
+*.npy 
+*.pt
+/data/starlight_dataset_condensed/*
