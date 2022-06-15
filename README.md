@@ -43,7 +43,7 @@ python train_denoiser.py --batch_size 1 --gpus 8 --notes default_settings --crop
 Please see [scripts/train_denoiser.py](https://github.com/monakhova/starlight_denoising/blob/main/scripts/train_denoiser.py) for full options and information. If you run out of memory, scale down the ```crop_size``` until it fits on your GPU (options: 'small', '256', '512', and 'full'). Note that during our experiments, we used 48GB GPUs. We also provide options for preloading a pre-trained model or resuming training, as well as options to change the noise model. 
 
 ### Running on SLURM cluster
-In addition, we provide an example script to run this code on a SLURM cluster [here]((https://github.com/monakhova/starlight_denoising/blob/main/scripts/train_denoiser_script.sh). You can run this using:
+In addition, we provide an example script to run this code on a SLURM cluster [here](https://github.com/monakhova/starlight_denoising/blob/main/scripts/train_denoiser_script.sh). You can run this using:
 ```
 sbatch train_denoiser_script.sh 
 ```
