@@ -30,8 +30,29 @@ We provide a [jupyter notebook demo](https://github.com/monakhova/starlight_deno
 
 
 ## Noise generator training code
-Coming soon.
+Our code to train our noise generator can be found [here](https://github.com/monakhova/starlight_denoising/blob/main/scripts/train_gan_noisemodel.py). This code takes in a small dataset of paired clean/noisy image bursts and learns a physics-informed noise model to represent realistic noise for a camera at a fixed gain setting. To train our GAN noise model using our data, please download our paired training dataset which can be found [here](https://drive.google.com/drive/folders/1xIxUfzkSf1pmCgY3QnrYTorc9ZoUlx7w?usp=sharing). Please place this data within the data folder. 
 
+To run the training script, run the following command:
+```
+python train_gan_noisemodel.py --batch_size 1 --gpus 8 --noiselist shot_read_uniform_row1_rowt_fixed1_periodic
+```
+
+We include options to change the physics-inspired noise parameters. For example, if you only want to include read and shot noise, you can run the script with the options ```--noiselist shot_read```. In addition, we provide options for including or excluding the U-Net from the noise model, options for specifying the dataset, and changing the discriminator loss to operate in real or fourier space.
+
+### Check denoiser performance after training
+To check out noise generator performance, run our noise generator jupyter notebook demo, [View Generated Noise.ipynb](https://github.com/monakhova/starlight_denoising/blob/main/View%Generated%Noise.ipynb), and change the following line to go to your saved checkpoint:
+
+```
+chkp_path = 'checkpoint_name_here'
+```
+
+By default, checkpoints are saved in /saved_models/ 
+
+### Running on SLURM cluster
+In addition, we provide an example script to run this code on a SLURM cluster [here](https://github.com/monakhova/starlight_denoising/blob/main/scripts/train_noise_script.sh). You can run this using:
+```
+sbatch train_noise_script.sh 
+```
 
 ## Denoiser training code
 Our code to retrain the video denoiser from scratch can be found [here](https://github.com/monakhova/starlight_denoising/blob/main/scripts/train_denoiser.py). By default, we use a crop size of 512x512 and run the training on 16 GPUs. You can adjust the number of GPUs, the crop size, and many other paramters, such as the save path, dataset path, the dataset type, and the network architecture through the run options. For example, we can run the script as:

@@ -10,6 +10,10 @@ import time
 import cv2
 from skimage import exposure
 import torchvision
+from pathlib import Path
+_script_dir = Path( __file__ ).parent
+_root_dir = _script_dir.parent
+
 
 def get_dataset_noise_visualization(dataset_arg):  
     crop_size = 512
@@ -116,7 +120,7 @@ class ToTensor2(object):
 class AddFixedNoise(object):
     """Convert ndarrays in sample to Tensors."""
     def __init__(self):
-            mean_noise = scipy.io.loadmat('data/fixed_pattern_noise.mat')['mean_pattern']
+            mean_noise = scipy.io.loadmat('../data/fixed_pattern_noise.mat')['mean_pattern']
             self.fixed_noise = mean_noise.astype('float32')/2**16
             self.fixednoiset = torch.tensor(self.fixed_noise.transpose(2,0,1).copy(), dtype = torch.float32).unsqueeze(1)
     def __call__(self, sample):
@@ -339,7 +343,7 @@ class Get_sample_noise_batch(object):
         self.transform = transform
         
         self.fixed_noise_opt = fixed_noise
-        mean_noise = scipy.io.loadmat('data/fixed_pattern_noise.mat')['mean_pattern']
+        mean_noise = scipy.io.loadmat(str(_root_dir) + '/data/fixed_pattern_noise.mat')['mean_pattern']
         self.fixed_noise = mean_noise.astype('float32')/2**16
 
     def __len__(self):

@@ -2,14 +2,16 @@ import torch.nn as nn
 import torch
 import numpy as np
 from models.spectral_normalization import SpectralNorm
-
 from torch.autograd import Variable
 Tensor = torch.cuda.FloatTensor 
 import torch.autograd as autograd
 import scipy.io
-import argparse, json, glob, os
-
+import argparse, json, glob, os, sys
 from models.unet import Unet
+
+from pathlib import Path
+_script_dir = Path( __file__ ).parent
+_root_dir = _script_dir.parent
 
 def t32(x):
     return torch.transpose(x,0, 2).squeeze(2)
@@ -445,7 +447,7 @@ class NoiseGenerator2d3d_distribubted(nn.Module):
         
         self.unet_opts = unet_opts
         
-        mean_noise = scipy.io.loadmat('../data/fixed_pattern_noise.mat')['mean_pattern']
+        mean_noise = scipy.io.loadmat('data/fixed_pattern_noise.mat')['mean_pattern']
         fixed_noise = mean_noise.astype('float32')/2**16
         if 'learned' in add_fixed:
             print('using learned fixed noise')
@@ -570,7 +572,7 @@ class NoiseGenerator2d3d_distributed_ablation(nn.Module):
         if 'uniform' in noise_list:    
             self.uniform_noise = torch.nn.Parameter(torch.tensor(0.00001*10000, dtype = self.dtype, device = device), requires_grad = True)
         if 'fixed1' in noise_list:
-            mean_noise = scipy.io.loadmat('data/fixed_pattern_noise.mat')['mean_pattern']
+            mean_noise = scipy.io.loadmat(str(_root_dir) + '/data/fixed_pattern_noise.mat')['mean_pattern']
             fixed_noise = mean_noise.astype('float32')/2**16
             self.fixednoiset = torch.tensor(fixed_noise.transpose(2,0,1), dtype = self.dtype, device = device).unsqueeze(0)
         if 'learnedfixed' in noise_list:
@@ -589,6 +591,7 @@ class NoiseGenerator2d3d_distributed_ablation(nn.Module):
         self.indices = None
         
         
+        
     def forward(self, x, split_into_patches = False, i0=None):
 
         if self.unet_opts == 'Unet_first':
@@ -601,7 +604,7 @@ class NoiseGenerator2d3d_distributed_ablation(nn.Module):
             noise += shot_noise
             if self.keep_track == True:
                 self.all_noise['shot_read'] = shot_noise.detach().cpu().numpy() 
-        elif 'read' in self.noise_list:
+        elif 'read' in self.noise_list and 'shot' not in self.noise_list:
             variance =self.read_noise
             noise += torch.randn(x.shape, requires_grad= True, device = self.device)*variance
         if 'uniform' in self.noise_list:    
@@ -613,12 +616,10 @@ class NoiseGenerator2d3d_distributed_ablation(nn.Module):
             row_noise = self.row_noise*torch.randn([*x.shape[0:-2],x.shape[-1]],requires_grad= True, device = self.device).unsqueeze(-2)
             noise += row_noise
             if self.keep_track == True:
-                self.all_noise['row'] = row_noise.detach().cpu().numpy() 
+                self.all_noise['row'] = np.repeat(row_noise.detach().cpu().numpy(), self.all_noise['shot_read'].shape[2], axis=2)
         if 'rowt' in self.noise_list:   
             row_noise_temp = self.row_noise_temp*torch.randn([*x.shape[0:-3],x.shape[-1]],requires_grad= True, device = self.device).unsqueeze(-2).unsqueeze(-2)
             noise += row_noise_temp
-            if self.keep_track == True:
-                self.all_noise['rowt'] = row_noise_temp.detach().cpu().numpy() 
         if 'fixed1' in self.noise_list or 'learnedfixed' in self.noise_list:
             if self.indices is not None:
                 i1 = self.indices[0]
