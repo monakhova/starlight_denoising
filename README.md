@@ -39,7 +39,7 @@ python train_gan_noisemodel.py --batch_size 1 --gpus 8 --noiselist shot_read_uni
 
 We include options to change the physics-inspired noise parameters. For example, if you only want to include read and shot noise, you can run the script with the options ```--noiselist shot_read```. In addition, we provide options for including or excluding the U-Net from the noise model, options for specifying the dataset, and changing the discriminator loss to operate in real or fourier space.
 
-### Check denoiser performance after training
+### Check noise generator performance after training
 To check out noise generator performance, run our noise generator jupyter notebook demo, [View Generated Noise.ipynb](https://github.com/monakhova/starlight_denoising/blob/main/View%20Generated%20Noise.ipynb), and change the following line to go to your saved checkpoint:
 
 ```
@@ -48,7 +48,9 @@ chkp_path = 'checkpoint_name_here'
 
 By default, checkpoints are saved in /saved_models/ 
 
-To use your noise model during denoiser training, update the function load_generator_model in train_denoiser.py to include your noise model name and path:
+
+### Use noise generator for denoiser training
+To use your noise model during denoiser training, update the function [load_generator_model](https://github.com/monakhova/starlight_denoising/blob/main/scripts/train_denoiser.py#L364) in train_denoiser.py to include your noise model name and path:
 ```
 elif args.noise_type == 'your_noise_model_here': 
         base_file = '../saved_models/your_noise_model_path_here/'
