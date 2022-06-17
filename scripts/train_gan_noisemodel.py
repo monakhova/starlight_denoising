@@ -375,14 +375,14 @@ def train(gpu, args):
                     fake_imgs = gh.split_into_patches2d(fake_imgs).to(gpu)
                 
                 if 'fourier' in args.discriminator_loss:
-                    print('using fourier loss for discriminator')
+                    #print('using fourier loss for discriminator')
                     fake_imgs = torch.abs(torch.fft.fftshift(torch.fft.fft2(fake_imgs, norm="ortho")))
                 elif 'mixed' in args.discriminator_loss:
-                    print('using mixed loss for discriminator')
+                    #print('using mixed loss for discriminator')
                     fake_imgs1 = torch.abs(torch.fft.fftshift(torch.fft.fft2(fake_imgs, norm="ortho")))
                     fake_imgs = torch.cat((fake_imgs, torch.abs(fake_imgs1)), 1)
                 elif 'complex' in args.discriminator_loss:
-                    print('using mixed loss for discriminator')
+                    #print('using mixed loss for discriminator')
                     fake_imgs1 = torch.fft.fftshift(torch.fft.fft2(fake_imgs, norm="ortho"))
 
                     fake_imgs = torch.cat((torch.real(fake_imgs1), torch.imag(fake_imgs1)),1)
