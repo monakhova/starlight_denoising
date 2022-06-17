@@ -35,7 +35,8 @@ def main():
     parser.add_argument('--loss', default= 'L1_LP2D', 
                         help = 'Choose loss or a combination of losses. Options: MSE, L1, TV, LP2D (LPIPS),\
                         angular (Cosine similarity between the 4 color channels)')
-    parser.add_argument('--data', default= 'stills_realvideo', help = 'Choose which data to use during training')
+    parser.add_argument('--data', default= 'stills_realvideo', help = 'Choose which data to use during training. \
+                         Options: stills, realvideo, MOTvideo')
     parser.add_argument('--multiply', default= 'gamma', 
                         help = 'Choose what sort of processing to do on the ground truth images. Options: None, \
                         histeq (does histogram equalization on the ground truth images before taking the loss), \
@@ -55,13 +56,13 @@ def main():
     parser.add_argument('--learning_rate', default = 0.0001, type=float)
     parser.add_argument('--batch_size', default = 1, type=int)
     parser.add_argument('--save_path', default = '../saved_models/', help='Specify where to save checkpoints during training')
-    parser.add_argument('--MOT_path', default = '../../work_path/MOTfiles_raw/',
+    parser.add_argument('--MOT_path', default = '../data/MOTfiles_raw/',
                         help='If using unprocessed MOT images during training, specify the filepath \
                         for where your MOT dataset is stored')
-    parser.add_argument('--stills_path', default = '../../Datasets/Canon/pairs_4_5_21_mat/', 
-                        help='Specify the filepath for the stills dataset. Should be ../data/stillpaits_mat/')
-    parser.add_argument('--cleanvideo_path', default = '../../work_path/Canon/8_25_21_videodataset_mat/',
-                        help='Specify the filepath for the clean video dataset. Should be ../data/RGBNIR_videodataset_mat/')
+    parser.add_argument('--stills_path', default = '../data/paired_data/stillpairs_mat', 
+                        help='Specify the filepath for the stills dataset.')
+    parser.add_argument('--cleanvideo_path', default = '../data/RGBNIR_videodataset_mat/',
+                        help='Specify the filepath for the clean video dataset.')
     parser.add_argument('--save_every', default = 20, type=int, 
                         help='Choose save frequency. Save every N epochs. ')
     parser.add_argument('-n', '--nodes', default=1,
@@ -362,14 +363,11 @@ def resume_from_checkpoint(args, model, device):
 
 def load_generator_model(args, gpu):
     if args.noise_type == 'unetfourier': 
-        generator = gh.load_generator2('../saved_models/noise_generator', gpu)
-    # Can add conditionals for alternative noise generators here
-    elif args.noise_type == 'shotreaduniform': 
-        base_file = '../../work_path/starlight_denoising_saved_models_smaller/generator/'
-        generator = gh.load_from_checkpoint_ab(base_file +'noUnet_newcalib_color_gray_True_periodic_lpips_mixed_patches_after_shot_read_uniform_256_Oct29_ablation', device = gpu)
-    elif args.noise_type == 'ulpf': 
-        base_file = '../../work_path/starlight_denoising_saved_models_smaller/generator/'
-        generator = gh.load_from_checkpoint_ab(base_file +'Unet_newcalib_color_gray_True_periodic_lpips_fourier_patches_after_shot_read_uniform_row1_rowt_learnedfixed_periodic_256_Nov7fixedlearned2', device = gpu)
+        generator = gh.load_from_checkpoint_ab('../saved_models/noise_generator', gpu)
+    # After training your own noise model, you can add it here to be loaded and used during denoiser training
+    elif args.noise_type == 'your_noise_model_here': 
+        base_file = '../saved_models/your_noise_model_path_here/'
+        generator = gh.load_from_checkpoint_ab(base_file, device = gpu)
     else:
         print('invalid generator')
     return generator#.cuda(gpu)

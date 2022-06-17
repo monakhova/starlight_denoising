@@ -18,7 +18,7 @@ import torch.distributed as dist
 
 import torch.multiprocessing as mp
 import torch.nn as nn
-import time
+import timef
 
 def find_free_port():
     """ https://stackoverflow.com/questions/1365265/on-localhost-how-do-i-pick-a-free-port-number """

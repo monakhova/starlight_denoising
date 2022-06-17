@@ -48,6 +48,13 @@ chkp_path = 'checkpoint_name_here'
 
 By default, checkpoints are saved in /saved_models/ 
 
+To use your noise model during denoiser training, update the function load_generator_model in train_denoiser.py to include your noise model name and path:
+```
+elif args.noise_type == 'your_noise_model_here': 
+        base_file = '../saved_models/your_noise_model_path_here/'
+```
+Then, rerun train_denoiser.py with the argument ```--noise_type your_noise_model_here```
+
 ### Running on SLURM cluster
 In addition, we provide an example script to run this code on a SLURM cluster [here](https://github.com/monakhova/starlight_denoising/blob/main/scripts/train_noise_script.sh). You can run this using:
 ```
@@ -62,6 +69,8 @@ python train_denoiser.py --batch_size 1 --gpus 8 --notes default_settings --crop
 ```
 
 Please see [scripts/train_denoiser.py](https://github.com/monakhova/starlight_denoising/blob/main/scripts/train_denoiser.py) for full options and information. If you run out of memory, scale down the ```crop_size``` until it fits on your GPU (options: 'small', '256', '512', and 'full'). Note that during our experiments, we used 48GB GPUs. We also provide options for preloading a pre-trained model or resuming training, as well as options to change the noise model. 
+
+Note that we pretrain our video denoiser using unprocessed videos from a subset of the MOT dataset. To include this in your traininig, please download the [MOT dataset](https://motchallenge.net/) and [unprocess](https://github.com/timothybrooks/unprocessing) the images. Once you have done this, you can update the filepath to your unprocessed MOT images, ```--MOT_path```, and add MOTvideo to ```--data```. 
 
 ### Running on SLURM cluster
 In addition, we provide an example script to run this code on a SLURM cluster [here](https://github.com/monakhova/starlight_denoising/blob/main/scripts/train_denoiser_script.sh). You can run this using:
