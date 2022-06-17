@@ -22,6 +22,14 @@ Our pre-trained noise model and denoiser model can be downloaded [here](https://
 ## Dataset 
 Instructions for downloading our full dataset can be found [here](https://kristinamonakhova.com/starlight_denoising/#dataset). For denoiser demonstration purposes, we also provide a curated, smaller dataset (1.3GB) [here](https://drive.google.com/drive/folders/1ztbuJElSdT2MTOm1RgGnSEDFXIsBHO5q?usp=sharing). This can be used for our denoising demo notebook. 
 
+We save and access images from our dataset as .mat files for easy loading/accessing. If you'd like to use our raw .dng files, you can use the following code snippet to load in the images:
+
+```
+from canon_utils import read_16bit_raw, raw_to_4
+raw_image = raw_to_4(read_16bit_raw('image_name.dng').astype('uint16')
+```
+This will read in the RAW file format, then split the image into 4 channels (R,G,B,NIR). Note that these functions do not perform demosaicing (we simply split up the color channels), so the resulting image will be a half the size of the original RAW image.
+
 ## Dataset and denoising demo
 We provide a [jupyter notebook demo](https://github.com/monakhova/starlight_denoising/blob/main/Denoise%20Submillilux%20Videos.ipynb) to showcase our dataset and pretrained denoiser performance. Please download our pre-trained models and our full or condensed dataset to view this demo. In this demo, we show our raw noisy submillilux video clips and then our denoiser performance. 
 

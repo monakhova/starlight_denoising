@@ -9,7 +9,6 @@ def read_16bit_raw(filename, height = 1280, width = 2160):
         for yy in range(width):
             low_bits = ord(pgmf.read(1))
             row.append(low_bits+255*ord(pgmf.read(1)))
-            #row.append(ord(pgmf.read(1)))
         raster.append(row)
 
     pgmf.close()
